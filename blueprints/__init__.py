@@ -80,10 +80,14 @@ def after_request(response):
 from blueprints.login import bp_login
 from blueprints.user.resources import bp_user
 from blueprints.image.resources import bp_image
+from blueprints.tag.resources import bp_tag
+from blueprints.komen.resources import bp_komen
 
 app.register_blueprint(bp_login, url_prefix='/login')
 app.register_blueprint(bp_user, url_prefix='/user')
 app.register_blueprint(bp_image, url_prefix='/image')
+app.register_blueprint(bp_tag, url_prefix='/tag')
+app.register_blueprint(bp_komen, url_prefix='/komen')
 
 
 db.create_all()
