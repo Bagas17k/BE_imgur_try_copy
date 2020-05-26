@@ -10,3 +10,16 @@ import requests
 
 bp_komen = Blueprint('komen', __name__)
 api = Api(bp_komen)
+
+class KomenResource(Resource):
+
+    @jwt_required
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('komen', location='form', required=True)
+        parser.add_argument('image_id', location='form', required=True)
+
+        args = parser.parse_args()
+
+        claims = get_jwt_claims()
+        user_id  = claims['id']

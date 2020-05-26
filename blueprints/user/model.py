@@ -10,6 +10,8 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(255))
+    email = db.Column(db.String(100), unique=True)
+    phone = db.Column(db.String(15), unique=True)
     salt = db.Column(db.String(255))
     status = db.Column(db.String(30), nullable=True, default=False)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
@@ -20,6 +22,8 @@ class Users(db.Model):
         'id' : fields.Integer,
         'username' : fields.String,
         'password' : fields.String,
+        'email':fields.String,
+        'phone':fields.String,
         'status' : fields.Boolean,
         'created_at' : fields.DateTime,
         'updated_at' : fields.DateTime
@@ -31,9 +35,11 @@ class Users(db.Model):
         'status' : fields.String
     }
 
-    def __init__(self, username, password, status, salt):
+    def __init__(self, username, password, email, phone, status, salt):
         self.username = username
         self.password = password
+        self.email = email
+        self.phone = phone
         self.status = status
         self.salt = salt
       

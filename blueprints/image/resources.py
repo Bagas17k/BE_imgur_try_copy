@@ -39,7 +39,7 @@ class ImagesResource(Resource):
         parser.add_argument('img_title', location='form', required=True)
         parser.add_argument(
             'img_url', type=werkzeug.datastructures.FileStorage, location='files')
-        parser.add_argument('deskripsi', location='form', required=True)
+        parser.add_argument('deskripsi', location='form')
         parser.add_argument('tag_id', location='form', required=True)
 
         args = parser.parse_args()
@@ -51,7 +51,7 @@ class ImagesResource(Resource):
 
         claims = get_jwt_claims()
 
-        image = Images(args['img_title'], img_link, args['deskripsi'], claims['id'], args['id'])
+        image = Images(args['img_title'], img_link, args['deskripsi'], claims['id'], args['tag_id'])
 
         db.session.add(image)
         db.session.commit()
@@ -68,13 +68,13 @@ class ImagesStringResource(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('img_title', location='form', required=True)
         parser.add_argument('img_url', location='form', required=True)
-        parser.add_argument('deskripsi', location='form', required=True)
+        parser.add_argument('deskripsi', location='form')
         parser.add_argument('tag_id', location='form', required=True)
         args = parser.parse_args()
 
         claims = get_jwt_claims()
 
-        image = Images(args['img_title'], args['img_url'], args['deskripsi'], claims['id'], args['id'])
+        image = Images(args['img_title'], args['img_url'], args['deskripsi'], claims['id'], args['tag_id'])
 
         db.session.add(image)
         db.session.commit()
