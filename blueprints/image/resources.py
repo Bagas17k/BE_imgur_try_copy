@@ -3,6 +3,8 @@ from flask_restful import Api, reqparse, Resource, marshal
 import json
 from blueprints import db, app
 from .model import Images
+from blueprints.user.model import Users
+from blueprints.tag.model import Tags
 from sqlalchemy import desc
 from flask_jwt_extended import create_access_token, get_jwt_identity, get_jwt_claims, jwt_required
 import werkzeug
@@ -12,6 +14,18 @@ bp_image = Blueprint('image', __name__)
 api = Api(bp_image)
 
 class ImagesResource(Resource):
+
+    def get(self, id):
+        qry = Images.query.get(id)
+        QRY = marshal(qry, Images.response_fields)
+        user = Users.query.filter_by(id=QRY['user_id']).first()
+        tag = Tags.query.filter_by(id=QRY['tag_id']).first()
+        QRY['user'] = marshal(user, Users.response_image)
+        QRY['tag'] = marshal(tag, Tags.response_fields)
+        if QRY is not None:
+            return QRY, 200
+        return {'status':'Not found'}, 400
+
     def __init__(self):
         pass
     
@@ -82,7 +96,31 @@ class ImagesStringResource(Resource):
 
         return marshal(image, Images.response_fields), 200, {'Content-Type': 'application/json'}
 
+class ImageList(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('p', type=int, location='args', default=1)
+        parser.add_argument('rp', type=int, location='args', default=25)
+        parser.add_argument('img_title', location='args')
+
+        args = parser.parse_args()
+        offset = (args['p']*args['rp']-args['rp'])
+        qry = Images.query
+
+        if args['img_title'] is not None:
+            qry = qry.filter_by(status=args['img_title'])
+
+        rows = []
+        for row in qry.limit(args['rp']).offset(offset).all():
+            QRY = marshal(row, Images.response_fields)
+            tag = Tags.query.filter_by(id=QRY['tag_id']).first()
+            QRY['tags'] = marshal(tag, Tags.response_fields)
+            rows.append(QRY)
+
+        return rows, 200
 
 
-api.add_resource(ImagesResource, '', '')
+
+api.add_resource(ImageList, '', '/list')
+api.add_resource(ImagesResource, '', '/<id>')
 api.add_resource(ImagesStringResource, '/string', '')

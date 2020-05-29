@@ -23,3 +23,12 @@ class KomenResource(Resource):
 
         claims = get_jwt_claims()
         user_id  = claims['id']
+
+        komen = Komens(args['komen'], user_id, args['image_id'])
+        db.session.add(komen)
+        db.session.commit()
+
+        app.logger.debug('DEBUG: %s', komen)
+
+        return marshal(komen, Komens.response_fields), 200
+

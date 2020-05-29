@@ -1,5 +1,6 @@
 from flask import Blueprint, Flask
 from flask_restful import Api, reqparse, Resource, marshal
+from flask_jwt_extended import create_access_token, get_jwt_identity, get_jwt_claims, jwt_required
 import json
 from blueprints import db, app
 from .model import Users
@@ -12,6 +13,15 @@ api = Api(bp_user)
 
 
 class UserResource(Resource):
+
+    @jwt_required
+    def get(self):
+        claims = get_jwt_claims()
+        qry = Users.query.get(claims['id'])
+        if qry is not None:
+            return marshal(qry, Users.response_fields),200
+        return {{'status': 'NOT_FOUND'}, 404}
+
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -34,15 +44,7 @@ class UserResource(Resource):
 
         return marshal(user, Users.response_fields), 200
 
-    def get(self, id=None):
-        qry = Users.query.get(id)
-
-        if qry is not None:
-            return marshal(qry, Users.response_fields), 200, {
-                'Content-Type': 'application/json'
-            }
-        return {'Status': 'id is gone'}, 404, {'Content-Type': 'application/json'}
-
+    
 class UserList(Resource):
     def get(self):
         parser = reqparse.RequestParser()
@@ -64,4 +66,4 @@ class UserList(Resource):
         return rows, 200
 
 api.add_resource(UserList, '', '/list')
-api.add_resource(UserResource, '', '/<id>')
+api.add_resource(UserResource, '', '/member')

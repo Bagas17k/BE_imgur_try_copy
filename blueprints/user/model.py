@@ -28,6 +28,11 @@ class Users(db.Model):
         'created_at' : fields.DateTime,
         'updated_at' : fields.DateTime
         }
+    
+    response_image = {
+        'id':fields.Integer,
+        'username':fields.String
+    }
 
     jwt_claims_fields = {
         'id' : fields.Integer,
