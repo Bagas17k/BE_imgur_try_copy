@@ -18,9 +18,7 @@ class UserResource(Resource):
     def get(self):
         claims = get_jwt_claims()
         qry = Users.query.get(claims['id'])
-        if qry is not None:
-            return marshal(qry, Users.response_fields),200
-        return {{'status': 'NOT_FOUND'}, 404}
+        return marshal(qry, Users.response_fields),200
 
 
     def post(self):
@@ -43,8 +41,8 @@ class UserResource(Resource):
         app.logger.debug('DEBUG: %s', user)
 
         return marshal(user, Users.response_fields), 200
-
     
+
 class UserList(Resource):
     def get(self):
         parser = reqparse.RequestParser()

@@ -22,9 +22,9 @@ class ImagesResource(Resource):
         tag = Tags.query.filter_by(id=QRY['tag_id']).first()
         QRY['user'] = marshal(user, Users.response_image)
         QRY['tag'] = marshal(tag, Tags.response_fields)
-        if QRY is not None:
+        if qry is not None:
             return QRY, 200
-        return {'status':'Not found'}, 400
+        return {'status':'Not found'}, 404
 
     def __init__(self):
         pass
@@ -108,7 +108,7 @@ class ImageList(Resource):
         qry = Images.query
 
         if args['img_title'] is not None:
-            qry = qry.filter_by(status=args['img_title'])
+            qry = qry.filter_by(img_title=args['img_title'])
 
         rows = []
         for row in qry.limit(args['rp']).offset(offset).all():

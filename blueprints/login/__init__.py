@@ -33,7 +33,7 @@ class CreateTokenResource(Resource):
                 qry_user['identifier'] = "imgur"
                 token = create_access_token(
                     identity=args['username'], user_claims=qry_user)
-                return {'token': token, 'status': status}, 200
+                return {'token': token}, 200
         return {'status': 'UNAUTHORIZED', 'message': 'invalid key or secret'}, 404
 
 

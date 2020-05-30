@@ -4,6 +4,7 @@ import json
 from blueprints import db, app
 from .model import Komens
 from blueprints.user.model import Users
+from datetime import datetime
 from sqlalchemy import desc
 from flask_jwt_extended import create_access_token, get_jwt_identity, get_jwt_claims, jwt_required
 import werkzeug
@@ -24,8 +25,9 @@ class KomenResource(Resource):
 
         claims = get_jwt_claims()
         user_id  = claims['id']
-
+        
         komen = Komens(args['komen'], user_id, args['image_id'])
+        komen.created_at = datetime.now()
         db.session.add(komen)
         db.session.commit()
 

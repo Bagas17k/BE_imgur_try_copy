@@ -9,6 +9,9 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_jwt_claims
 from flask_script import Manager
 from functools import wraps
+from werkzeug.contrib.cache import SimpleCache
+
+cache = SimpleCache()
 app = Flask(__name__)
 CORS(app, origins="*", allow_headers=[
     "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
@@ -29,17 +32,6 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-
-def admin_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
-        claims = get_jwt_claims()
-        if not claims['status']:
-            return {'status': 'FORBIDDEN', 'message': 'Admin only'}, 403
-        else:
-            return fn(*args, **kwargs)
-    return wrapper
 
 
 @app.before_request
