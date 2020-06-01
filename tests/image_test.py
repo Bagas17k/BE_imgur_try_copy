@@ -65,6 +65,20 @@ class TestImageCrud():
         res = client.get('/image',query_string=param,
                         headers={'Authorization': 'Bearer ' + token},
                         content_type='application/json')
+    
+    def test_image_list_order_sort_ASC(self, client, init_database):
+        token = create_token()
+        param = {'orderby':'created_at','sort':'asc'}
+        res = client.get('/image',query_string=param,
+                        headers={'Authorization': 'Bearer ' + token},
+                        content_type='application/json')
+
+    def test_image_list_order_sort(self, client, init_database):
+        token = create_token()
+        param = {'orderby':'created_at','sort':'desc'}
+        res = client.get('/image',query_string=param,
+                        headers={'Authorization': 'Bearer ' + token},
+                        content_type='application/json')
         
         res_json = json.loads(res.data)
         assert res.status_code == 200
